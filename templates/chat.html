@@ -1,0 +1,126 @@
+<!-- templates/chat.html -->
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چت بات هوشمند</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="bg-gray-50 h-screen flex flex-col">
+<header class="app-header gradient-bg text-white p-4 shadow-lg">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+        <div class="flex items-center space-x-3 space-x-reverse">
+            <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"/>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold">هوش مصنوعی چندکاره</h1>
+                <p class="text-sm opacity-90">دستیار هوشمند شما</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2 space-x-reverse">
+            <button id="clearHistoryBtn"
+                    class="bg-white/20 text-white rounded-lg px-3 py-1 text-sm border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50">
+                پاک کردن تاریخچه
+            </button>
+        </div>
+        <div class="flex items-center space-x-2 space-x-reverse">
+            <label class="text-sm font-medium">مدل:</label>
+            <form method="post" id="modelForm" class="m-0">
+                {% csrf_token %}
+                <select name="model" id="modelSelector"
+                        class="bg-white/20 text-white rounded-lg px-3 py-1 text-sm border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50"
+                        onchange="this.form.submit()">
+                    <option value="diabetes" {% if selected_model == 'diabetes' %}selected{% endif %}
+                            class="text-gray-800">پیشبینی دیابت
+                    </option>
+                    <option value="movie" {% if selected_model == 'movie' %}selected{% endif %} class="text-gray-800">
+                        پیشنهاد فیلم
+                    </option>
+                </select>
+            </form>
+        </div>
+    </div>
+</header>
+
+<button id="scrollToBottomBtn" title="برو به پایین">↓</button>
+
+<div class="chat-card">
+    <div id="messagesContainer" class="bg-white rounded-lg p-4 scroll-smooth">
+        <div id="messagesList" class="space-y-4">
+            {% for sender, message in chat_history %}
+                <div class="flex {% if sender == 'user' %}justify-end{% else %}justify-start{% endif %} message-animation">
+                    <div class="max-w-xs lg:max-w-md">
+                        <div class="msg-bubble {% if sender == 'user' %}bg-blue-500 text-white rounded-2xl rounded-bl-sm{% else %}bg-white border border-gray-200 rounded-2xl rounded-tr-sm{% endif %} p-4 shadow-md">
+                            {% if sender != 'user' %}
+                                <div class="flex items-center space-x-2 space-x-reverse mb-2">
+                                    <div class="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-xs text-gray-500 font-medium">
+                                        {% if selected_model == 'diabetes' %}
+                                            پیشبینی دیابت
+                                        {% else %}
+                                            پیشنهاد دهنده فیلم
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            {% endif %}
+                            <p class="{% if sender == 'user' %}text-white{% else %}text-gray-800{% endif %}">{{ message }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="chat-input-fixed">
+    <form method="post" enctype="multipart/form-data" id="chatForm"
+          class="flex items-end space-x-3 space-x-reverse bg-transparent">
+        {% csrf_token %}
+        <input type="hidden" name="model" id="currentModelInput" value="{{ selected_model }}">
+        {% if selected_model == 'diabetes' %}
+            <label class="cursor-pointer hover-scale mr-2">
+                <input type="file" id="fileInput" name="test_image" class="hidden" accept="image/*">
+                <div class="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                    </svg>
+                </div>
+            </label>
+        {% endif %}
+
+        <div class="flex-1 relative">
+            <textarea
+                    id="messageInput"
+                    name="user_input"
+                    placeholder="پیام خود را بنویسید..."
+                    class="w-full resize-none rounded-2xl border border-gray-300 px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent max-h-32"
+                    rows="1"
+            ></textarea>
+
+            <button
+                    type="submit"
+                    id="sendButton"
+                    class="absolute left-2 bottom-2 w-8 h-8 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center transition-colors hover-scale disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+            </button>
+        </div>
+    </form>
+</div>
+<script src="/static/js/main.js"></script>
+
+</body>
+</html>
