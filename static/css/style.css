@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
+
+* {
+    font-family: 'Vazirmatn', sans-serif;
+}
+
+.message-animation {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.typing-indicator {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.4;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+.scroll-smooth {
+    scroll-behavior: smooth;
+}
+
+
+header.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+}
+
+.gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.glass-effect {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.hover-scale {
+    transition: transform 0.2s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+.chat-input-fixed {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 30px;
+    width: 100%;
+    max-width: 768px;
+    z-index: 70;
+    padding: 0 1rem;
+}
+
+
+.chat-card {
+    max-width: 768px;
+    margin: 1rem auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 210px);
+}
+
+
+#messagesContainer {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    background-size: cover;
+    background-position: center;
+    transition: background 300ms ease;
+}
+
+
+#scrollToBottomBtn {
+    position: fixed;
+    right: 24px;
+    bottom: 90px;
+    z-index: 80;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    background: linear-gradient(180deg, #2563eb, #7c3aed);
+    color: white;
+    cursor: pointer;
+}
+
+@media (max-width: 640px) {
+    .msg-bubble {
+        max-width: 80%;
+    }
+
+    .chat-card {
+        height: calc(100vh - 160px);
+    }
+
+    #scrollToBottomBtn {
+        right: 12px;
+        bottom: 82px;
+    }
+}
+
+.bg-diabetes {
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(250, 250, 255, 0.85));
+}
+
+.bg-movie {
+    background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.04), rgba(8, 8, 20, 0.06));
+}
